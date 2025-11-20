@@ -15,7 +15,7 @@ let ordersCollection;
 
 async function connectDB() {
   await client.connect();
-  const db = client.db("lessonDB");
+  const db = client.db("lessonsDB");
   lessonsCollection = db.collection("lessons");
   ordersCollection = db.collection("orders");
   console.log("✅ Connected to MongoDB Atlas");
