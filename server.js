@@ -33,6 +33,8 @@ app.get("/lessons", async (req, res) => {
   res.json(lessons);
 });
 
+// POST /orders
+
 app.post("/orders", async (req, res) => {
   const order = req.body;
   await ordersCollection.insertOne(order);
@@ -69,6 +71,48 @@ app.get("/seed-lessons", async (req, res) => {
       price: 120,
       spaces: 5,
       image: "coding_image.png",
+    },
+    {
+      subject: "Art",
+      location: "Mill Hill",
+      price: 85,
+      spaces: 6,
+      image: "Art_image.png",
+    },
+    {
+      subject: "Music",
+      location: "Finchley",
+      price: 95,
+      spaces: 5,
+      image: "music_image.png",
+    },
+    {
+      subject: "Drama",
+      location: "Barnet",
+      price: 100,
+      spaces: 6,
+      image: "drama_image.png",
+    },
+    {
+      subject: "Spanish",
+      location: "Muswell Hill",
+      price: 105,
+      spaces: 5,
+      image: "spanish_image.png",
+    },
+    {
+      subject: "Chess",
+      location: "Wembley",
+      price: 95,
+      spaces: 6,
+      image: "chess_image.png",
+    },
+    {
+      subject: "Photography",
+      location: "Greenwich",
+      price: 115,
+      spaces: 5,
+      image: "photography_image.png",
     },
   ];
 
