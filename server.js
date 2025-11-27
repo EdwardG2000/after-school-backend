@@ -11,9 +11,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// LOGGER MIDDLEWARE
+
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// STATIC IMAGES
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use("/lesson-images", express.static(path.join(__dirname, "images")));
+
+// MONGODB SETUP
 
 const client = new MongoClient(process.env.MONGO_URI);
 let lessonsCollection;
@@ -24,9 +35,11 @@ async function connectDB() {
   const db = client.db("lessonsDB");
   lessonsCollection = db.collection("lessons");
   ordersCollection = db.collection("orders");
-  console.log(" Connected to MongoDB Atlas");
+  console.log("Connected to MongoDB Atlas");
 }
 connectDB();
+
+// GET /lessons
 
 app.get("/lessons", async (req, res) => {
   const lessons = await lessonsCollection.find().toArray();
@@ -41,7 +54,46 @@ app.post("/orders", async (req, res) => {
   res.json({ message: "Order saved!" });
 });
 
-// TEMPORARY ROUTE TO SEED FEWER LESSONS
+// PUT /lessons/:id
+
+app.put("/lessons/:id", async (req, res) => {
+  const lessonId = req.params.id;
+  const updates = req.body;
+
+  try {
+    const result = await lessonsCollection.updateOne(
+      { _id: new ObjectId(lessonId) },
+      { $set: updates }
+    );
+
+    res.json({ message: "Lesson updated", result });
+  } catch (error) {
+    console.error("Failed to update lesson:", error);
+    res.status(500).json({ error: "Failed to update lesson" });
+  }
+});
+
+//FULL-TEXT SEARCH
+
+app.get("/search", async (req, res) => {
+  const query = req.query.q?.toLowerCase() || "";
+
+  const lessons = await lessonsCollection
+    .find({
+      $or: [
+        { subject: { $regex: query, $options: "i" } },
+        { location: { $regex: query, $options: "i" } },
+        { price: { $regex: query, $options: "i" } },
+        { spaces: { $regex: query, $options: "i" } },
+      ],
+    })
+    .toArray();
+
+  res.json(lessons);
+});
+
+// SEED ROUTE
+
 app.get("/seed-lessons", async (req, res) => {
   const seedData = [
     {
@@ -121,7 +173,10 @@ app.get("/seed-lessons", async (req, res) => {
 
   res.json({ message: "10 lessons with images added!" });
 });
+
+// START SERVER
+
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
-  console.log(` Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
