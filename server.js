@@ -24,7 +24,7 @@ async function connectDB() {
   const db = client.db("lessonsDB");
   lessonsCollection = db.collection("lessons");
   ordersCollection = db.collection("orders");
-  console.log("✅ Connected to MongoDB Atlas");
+  console.log(" Connected to MongoDB Atlas");
 }
 connectDB();
 
@@ -119,9 +119,9 @@ app.get("/seed-lessons", async (req, res) => {
   await lessonsCollection.deleteMany({});
   await lessonsCollection.insertMany(seedData);
 
-  res.json({ message: "4 lessons with images added!" });
+  res.json({ message: "10 lessons with images added!" });
 });
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
-  console.log(`🚀 Server running on port ${port}`);
+  console.log(` Server running on port ${port}`);
 });
