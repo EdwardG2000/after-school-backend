@@ -78,4 +78,6 @@ app.get("/seed-lessons", async (req, res) => {
   res.json({ message: "4 lessons with images added!" });
 });
 const port = process.env.PORT || 4000;
-app.listen(port, ()
+app.listen(port, () => {
+  console.log(`🚀 Server running on port ${port}`);
+});
